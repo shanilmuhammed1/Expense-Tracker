@@ -61,6 +61,7 @@ import androidx.compose.material3.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.filled.Delete
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -328,7 +329,8 @@ fun TransactionsList(){
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ){
                     items(transactions) { transaction ->
-                        TransactionItem(transaction = transaction)
+                        TransactionItem(transaction = transaction,
+                            onDelete = { repository.deleteTransaction(it) })
                     }
                 }
             }
@@ -336,7 +338,7 @@ fun TransactionsList(){
     }
 }
 @Composable
-fun TransactionItem(transaction: Transaction){
+fun TransactionItem(transaction: Transaction, onDelete: (Long) -> Unit){
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -381,6 +383,17 @@ fun TransactionItem(transaction: Transaction){
                     androidx.compose.ui.graphics.Color(0xFFFF5722) // Red for expense
                 }
             )
+            Spacer(modifier = Modifier.width(8.dp))
+
+            IconButton(
+                onClick = { onDelete(transaction.id) }
+            ){
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Transaction",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     }
 }
