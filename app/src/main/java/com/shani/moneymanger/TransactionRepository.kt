@@ -51,6 +51,20 @@ class TransactionRepository private constructor(context: Context) {
             }
         }
     }
+    fun updateTransaction(transaction: Transaction) {
+        scope.launch {
+            val entity = TransactionEntity(
+                id = transaction.id,
+                amount = transaction.amount,
+                type = transaction.type.name,
+                category = transaction.category.name,
+                description = transaction.description,
+                date = transaction.date.toString()
+            )
+            transactionDao.updateTransaction(entity)
+        }   
+    }
+
 
     fun getFinancialSummary(): FinancialSummary {
         val allTransactions = _transactions.value

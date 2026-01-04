@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,9 +31,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.filled.Edit  // ← Need this!
+import androidx.compose.material.icons.filled.Delete
 
 @Composable
-fun TransactionsList(){
+fun TransactionsList(
+    onDeleteTransaction: (Long) -> Unit,
+    onEditTransaction: (Transaction) -> Unit
+){
     val repository = TransactionRepository.getInstance(LocalContext.current)
     val transactions by repository.transactions.collectAsState()
 
@@ -73,7 +79,9 @@ fun TransactionsList(){
                 ){
                     items(transactions) { transaction ->
                         TransactionItem(transaction = transaction,
-                            onDelete = { repository.deleteTransaction(it) })
+                            onDelete = onDeleteTransaction,
+                            onEdit = onEditTransaction )
+
                     }
                 }
             }
@@ -82,7 +90,7 @@ fun TransactionsList(){
 }
 
 @Composable
-fun TransactionItem(transaction: Transaction, onDelete: (Long) -> Unit){
+fun TransactionItem(transaction: Transaction, onDelete: (Long) -> Unit,onEdit: (Transaction) -> Unit){
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -128,6 +136,17 @@ fun TransactionItem(transaction: Transaction, onDelete: (Long) -> Unit){
                 }
             )
             Spacer(modifier = Modifier.width(8.dp))
+
+            IconButton(
+                onClick = { onEdit(transaction) }
+            ){
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit Transaction")
+
+
+            }
+
 
             IconButton(
                 onClick = { onDelete(transaction.id) }
