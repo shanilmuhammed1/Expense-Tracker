@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -43,7 +44,7 @@ fun TransactionsList(
     val transactions by repository.transactions.collectAsState()
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ){
         Column(
@@ -74,7 +75,7 @@ fun TransactionsList(
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.heightIn(max = 300.dp),
+                    modifier = Modifier.heightIn(max = 400.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ){
                     items(transactions) { transaction ->
