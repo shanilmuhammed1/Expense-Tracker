@@ -77,7 +77,6 @@ fun Homescreen(
                 .fillMaxSize()
                 .systemBarsPadding()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = "My Expense Tracker",
@@ -93,12 +92,12 @@ fun Homescreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            FinancialSummaryCard(   transactions = filteredTransactions)  // ⭐ FIXED
+            FinancialSummaryCard(   transactions = filteredTransactions)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TransactionsList(
-                transactions = filteredTransactions,  // ⭐ FIXED - Added this line
+                transactions = filteredTransactions,
                 onDeleteTransaction = { transactionId ->
                     repository.deleteTransaction(transactionId)
                 },

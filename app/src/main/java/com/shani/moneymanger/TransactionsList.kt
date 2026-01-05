@@ -1,6 +1,8 @@
 package com.shani.moneymanger
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -8,13 +10,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TransactionsList(
-    transactions: List<Transaction>,  // ⭐ MUST HAVE THIS PARAMETER
+    transactions: List<Transaction>,
     onDeleteTransaction: (Long) -> Unit,
     onEditTransaction: (Transaction) -> Unit
 ) {
-    // ⭐ DO NOT access repository here!
-    // ⭐ DO NOT use collectAsState() here!
-
     Column {
         Text(
             text = "Recent Transactions",
@@ -31,12 +30,20 @@ fun TransactionsList(
                 modifier = Modifier.padding(16.dp)
             )
         } else {
-            transactions.forEach { transaction ->
-                TransactionItem(
-                    transaction = transaction,
-                    onDelete = onDeleteTransaction,
-                    onEdit = onEditTransaction
-                )
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(
+                    items = transactions,
+                    key = { transaction -> transaction.id }
+                ) { transaction ->
+                    TransactionItem(
+                        transaction = transaction,
+                        onDelete = onDeleteTransaction,
+                        onEdit = onEditTransaction
+                    )
+                }
             }
         }
     }
