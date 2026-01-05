@@ -14,19 +14,19 @@ enum class TransactionType(val displayName: String) {
     EXPENSE("Expense")
 }
 
-enum class Category(val displayName: String){
-    SALARY("Salary"),
-    BUSINESS("Business"),
-    INVESTMENT("Investment"),
-    GIFTS("Gifts"),
-    RENT("Rent"),
-    FOOD("Food"),
-    TRANSPORTATION("Transportation"),
-    ENTERTAINMENT("Entertainment"),
-    SHOPPING("Shopping"),
-    BILLS("Bills"),
-    HEALTH("Health"),
-    OTHER("Other")
+enum class Category(val displayName: String, val  icon: String){
+    SALARY("Salary", "💰"),
+    BUSINESS("Business",  "🛍️"),
+    INVESTMENT("Investment", "💰"),
+    GIFTS("Gifts","🏡🏡"),
+    RENT("Rent","🏡"),
+    FOOD("Food", "🍕"),
+    TRANSPORTATION("Transportation", "🚗"),
+    ENTERTAINMENT("Entertainment", "🎬"),
+    SHOPPING("Shopping", "🛍️"),
+    BILLS("Bills", "💡"),
+    HEALTH("Health", "🏥"),
+    OTHER("Other", "📝")
 }
 
 data class Transaction(
@@ -44,4 +44,11 @@ data class FinancialSummary(
 ){
     val Savings: Double
         get() = totalIncome - totalExpense
+}
+
+fun List<Transaction>.filterByDateRange(range: DateRange): List<Transaction> {
+    return this.filter { transaction ->
+        transaction.date >= range.startDate &&
+                transaction.date <= range.endDate
+    }
 }

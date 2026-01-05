@@ -1,44 +1,88 @@
 package com.shani.moneymanger
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun PeriodSelector(){
-    var selectedPeriod by remember { mutableStateOf(TimePeriod.DAILY) }
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        Button(
-            onClick = { expanded = true },
+fun PeriodSelector(
+    currentRange: DateRange,
+    onRangeChanged: (DateRange) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Text(text = "${selectedPeriod.displayName} ▼")
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            TimePeriod.values().forEach { period ->
-                DropdownMenuItem(
-                    text = { Text(text = period.displayName) },
-                    onClick = {
-                        selectedPeriod = period
-                        expanded = false
-                    }
-                )
+            // ⭐ View mode selector (Day/Week/Month tabs)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ViewMode.values().forEach { mode ->
+                    FilterChip(
+                        selected = currentRange.viewMode == mode,
+                        onClick = {
+                            val newRange = DateRange.current(mode)
+                            onRangeChanged(newRange)
+                        },
+                        label = { Text(mode.displayName) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ⭐ Navigation row (Previous / Display / Next)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Previous button
+                IconButton(
+                    onClick = {
+                        val prevRange = currentRange.previous()
+                        onRangeChanged(prevRange)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Previous"
+                    )
+                }
+
+                // Current period display
+                Text(
+                    text = currentRange.displayText,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                // Next button
+                IconButton(
+                    onClick = {
+                        val nextRange = currentRange.next()
+                        onRangeChanged(nextRange)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "Next"
+                    )
+                }
+            }
         }
     }
-
 }
