@@ -30,9 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Homescreen(
-    onNavigateToChart: () -> Unit
-){
+fun Homescreen(){
     val repository = TransactionRepository.getInstance(LocalContext.current)
     var currentRange by remember { mutableStateOf(DateRange.current(ViewMode.MONTH)) }  // ⭐ FIXED
     var showAddDialog by remember { mutableStateOf(false) }
@@ -106,25 +104,8 @@ fun Homescreen(
                     showEditDialog = true
                 }
             )
-
             Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = onNavigateToChart,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            {
-                Icon(
-                    imageVector = Icons.Default.Analytics,
-                    contentDescription = null,
-                )
-                Spacer(
-                    modifier = Modifier.width(8.dp)
-                )
-                Text("View Expense Trend")  // ⭐ Fixed typo
-            }
         }
-
         // Floating Action Button
         FloatingActionButton(
             onClick = { showAddDialog = true },

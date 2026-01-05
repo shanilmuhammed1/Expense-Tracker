@@ -28,6 +28,9 @@ fun ExpenseChart(
             .filter { it.type == TransactionType.EXPENSE }
             .groupBy { it.category }
             .mapValues { entry -> entry.value.sumOf { it.amount } }
+            .toList()
+            .sortedByDescending { it.second }
+            .toMap()
     }
 
     val totalExpense = expenses.values.sum()

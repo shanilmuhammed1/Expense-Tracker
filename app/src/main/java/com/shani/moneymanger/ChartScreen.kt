@@ -15,9 +15,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChartScreen(
-    onNavigateBack: () -> Unit
-) {
+fun ChartScreen() {
     val repository = TransactionRepository.getInstance(LocalContext.current)
 
     // ⭐ ADD: Manage date range in ChartScreen too
@@ -30,21 +28,7 @@ fun ChartScreen(
         allTransactions.filterByDateRange(currentRange)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Expense Trend") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    Scaffold() { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
