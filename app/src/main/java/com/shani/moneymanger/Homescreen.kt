@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import java.time.LocalDateTime
+import java.time.Instant.now
 
 @Composable
 fun Homescreen(){
     val repository = TransactionRepository.getInstance(LocalContext.current)
-    var currentRange by remember { mutableStateOf(DateRange.current(ViewMode.MONTH)) }  // ⭐ FIXED
+    var currentRange by remember { mutableStateOf(DateRange.current(ViewMode.DAY)) }  // ⭐ FIXED
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var selectedTransaction by remember { mutableStateOf<Transaction?>(null)}
@@ -124,12 +126,20 @@ fun Homescreen(){
 
     // Add Transaction Dialog
     if (showAddDialog) {
+        val now = java.time.LocalDateTime.now()
         AddTransactionDialog(
             onDismiss = { showAddDialog = false },
             onConfirm = { transaction ->
                 repository.addTransaction(transaction)
                 showAddDialog = false
-            }
+            },
+            defaultDate = LocalDateTime.of(
+                currentRange.startDate.year,
+                currentRange.startDate.month,
+                currentRange.startDate.dayOfMonth,
+                now.hour,
+                now.minute
+            )
         )
     }
 

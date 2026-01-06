@@ -1,5 +1,9 @@
 package com.shani.moneymanger
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,14 +25,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import java.time.LocalDateTime
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.rememberDatePickerState
+import java.time.format.DateTimeFormatter
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionDialog(
     onDismiss: () -> Unit,
-    onConfirm: (Transaction) -> Unit
+    onConfirm: (Transaction) -> Unit,
+    defaultDate: LocalDateTime = LocalDateTime.now()
 ){
     var amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -36,6 +51,12 @@ fun AddTransactionDialog(
     var selectedCategory by remember { mutableStateOf(Category.BILLS) }
     var categoryDropdownExpanded by remember { mutableStateOf(false) }
     var typeDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedDateTime by remember { mutableStateOf(defaultDate) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+
+
+
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -43,6 +64,30 @@ fun AddTransactionDialog(
         title = { Text("Add Transaction") },
         text = {
             Column {
+                Text("Date&Time", style = MaterialTheme.typography.bodyMedium )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                     OutlinedButton(
+                         onClick = {showDatePicker = true},
+                         modifier = Modifier.weight(1f)
+                     ) {
+                         Text(text = selectedDateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")),
+                             style = MaterialTheme.typography.bodySmall
+                         )
+                     }
+                    OutlinedButton(
+                        onClick = { showTimePicker = true },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = selectedDateTime.format(DateTimeFormatter.ofPattern("HH:mm")),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                }
                 // Amount input
                 OutlinedTextField(
                     value = amount,
@@ -136,7 +181,8 @@ fun AddTransactionDialog(
                             amount = amountValue,
                             type = selectedType,
                             category = selectedCategory,
-                            description = description
+                            description = description,
+                            date = selectedDateTime
                         )
                         onConfirm(transaction)
                     }
@@ -151,4 +197,74 @@ fun AddTransactionDialog(
             }
         }
     )
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDateTime
+                .atZone(java.time.ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        )
+
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val localDate = java.time.Instant
+                                .ofEpochMilli(millis)
+                                .atZone(java.time.ZoneId.systemDefault())
+                                .toLocalDate()
+
+                            selectedDateTime = LocalDateTime.of(
+                                localDate,
+                                selectedDateTime.toLocalTime()
+                            )
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+
+    if (showTimePicker) {
+        val timePickerState = rememberTimePickerState(
+            initialHour = selectedDateTime.hour,
+            initialMinute = selectedDateTime.minute
+        )
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        selectedDateTime = selectedDateTime
+                            .withHour(timePickerState.hour)
+                            .withMinute(timePickerState.minute)
+                        showTimePicker = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) {
+                    Text("Cancel")
+                }
+            },
+            text = {
+                TimePicker(state = timePickerState)
+            }
+        )
+    }
 }
