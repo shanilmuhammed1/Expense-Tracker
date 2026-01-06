@@ -59,6 +59,7 @@ fun AddTransactionDialog(
 
 
     AlertDialog(
+        containerColor = MaterialTheme.colorScheme.surface,
         onDismissRequest = onDismiss,
 
         title = { Text("Add Transaction") },

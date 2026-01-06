@@ -52,6 +52,9 @@ fun ExpenseChart(
     )
 
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),

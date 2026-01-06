@@ -22,6 +22,9 @@ fun TransactionItem(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),

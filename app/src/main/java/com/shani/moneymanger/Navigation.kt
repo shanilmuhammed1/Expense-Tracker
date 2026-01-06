@@ -1,5 +1,6 @@
 package com.shani.moneymanger
 
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -14,7 +15,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Analytics
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+
 object Routes {
     const val HOME = "home"
     const val CHART = "chart"
@@ -27,23 +33,43 @@ fun AppNavigation() {
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = currentRoute == Routes.HOME,
-                    onClick = { navController.navigate(Routes.HOME) },
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") }
-                )
-                NavigationBarItem(
-                    selected = currentRoute == Routes.CHART,
-                    onClick = { navController.navigate(Routes.CHART) },
-                    icon = { Icon(Icons.Default.Analytics, contentDescription = "Chart") },
-                    label = { Text("Expense Trend") }
-                )
 
-            }
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ) {
+
+                    NavigationBarItem(
+
+                        selected = currentRoute == Routes.HOME,
+                        onClick = { navController.navigate(Routes.HOME) },
+                        icon = {
+                            Icon(
+                                Icons.Default.Home,
+                                contentDescription = "Home",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
+                        label = { Text("Home") }
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == Routes.CHART,
+                        onClick = { navController.navigate(Routes.CHART) },
+                        icon = {
+                            Icon(
+                                Icons.Default.Analytics,
+                                contentDescription = "Chart",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
+                        label = { Text("Expense Trend") }
+                    )
+
+
+                }
         }
-    ) { padding ->
+    )
+        { padding ->
         NavHost(
             navController = navController,
             startDestination = Routes.HOME,
