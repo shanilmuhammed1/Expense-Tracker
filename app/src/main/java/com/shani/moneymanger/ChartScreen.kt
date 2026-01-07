@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PictureAsPdf
@@ -15,12 +17,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChartScreen() {
     val context = LocalContext.current
     val repository = TransactionRepository.getInstance(LocalContext.current)
-
+    val scope = rememberCoroutineScope()
     // ⭐ ADD: Manage date range in ChartScreen too
     var currentRange by remember { mutableStateOf(DateRange.current(ViewMode.MONTH)) }
 
@@ -35,7 +39,6 @@ fun ChartScreen() {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
                     if (filteredTransactions.isEmpty()) {
                     Toast.makeText(
                         context,
@@ -43,11 +46,13 @@ fun ChartScreen() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    pdfExporter.exportTransactions(
-                        context = context,
-                        transactions = filteredTransactions,
-                        dateRange = currentRange
-                    )
+                    scope.launch {
+                        pdfExporter.exportTransactions(
+                            context = context,
+                            transactions = filteredTransactions,
+                            dateRange = currentRange
+                        )
+                    }
                 }
                 }
             ) {
@@ -63,6 +68,7 @@ fun ChartScreen() {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = "Expense Analysis",
@@ -83,6 +89,8 @@ fun ChartScreen() {
 
             // ⭐ UPDATED: Pass filtered transactions
             ExpenseChart(transactions = filteredTransactions)
+
+            Spacer(modifier = Modifier.height(38.dp))
         }
     }
 }
