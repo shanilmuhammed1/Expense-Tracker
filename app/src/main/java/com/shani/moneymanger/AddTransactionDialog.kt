@@ -111,17 +111,20 @@ fun AddTransactionDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Type dropdown (Income/Expense)
-                Box {
+                ExposedDropdownMenuBox(
+                    expanded = typeDropdownExpanded,
+                    onExpandedChange = { typeDropdownExpanded = !typeDropdownExpanded }
+                ) {
                     OutlinedTextField(
                         value = selectedType.displayName,
                         onValueChange = { },
                         readOnly = true,
                         label = { Text("Type") },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
                         trailingIcon = {
-                            IconButton(onClick = { typeDropdownExpanded = true }) {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                            }
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeDropdownExpanded)
                         }
                     )
                     DropdownMenu(
@@ -143,17 +146,20 @@ fun AddTransactionDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Category dropdown
-                Box {
+                ExposedDropdownMenuBox(
+                    expanded = categoryDropdownExpanded,
+                    onExpandedChange = { categoryDropdownExpanded = !categoryDropdownExpanded }
+                ) {
                     OutlinedTextField(
                         value = selectedCategory.displayName,
                         onValueChange = { },
                         readOnly = true,
                         label = { Text("Category") },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
                         trailingIcon = {
-                            IconButton(onClick = { categoryDropdownExpanded = true }) {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                            }
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryDropdownExpanded)
                         }
                     )
                     DropdownMenu(

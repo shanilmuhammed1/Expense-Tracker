@@ -1,5 +1,6 @@
 package com.shani.moneymanger
 
+import android.R.attr.onClick
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,12 +22,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 
 import java.time.LocalDateTime
+@OptIn (ExperimentalMaterial3Api::class)
 
 @Composable
 fun EditTransactionDialog(
@@ -66,17 +71,21 @@ fun EditTransactionDialog(
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Box {
+                ExposedDropdownMenuBox(
+                    expanded = typeDropdownExpanded,
+                    onExpandedChange = { typeDropdownExpanded = !typeDropdownExpanded }
+                ) {
                     OutlinedTextField(
+
                         value = selectedType.displayName,
                         onValueChange = { },
                         readOnly = true,
                         label = { Text("Type") },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
                         trailingIcon = {
-                            IconButton(onClick = { typeDropdownExpanded = true }) {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                            }
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = typeDropdownExpanded)
                         }
                     )
                     DropdownMenu(
@@ -97,17 +106,20 @@ fun EditTransactionDialog(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Box {
+                ExposedDropdownMenuBox(
+                    expanded = categoryDropdownExpanded,
+                    onExpandedChange = { categoryDropdownExpanded = !categoryDropdownExpanded }
+                ) {
                     OutlinedTextField(
                         value = selectedCategory.displayName,
                         onValueChange = { },
                         readOnly = true,
                         label = { Text("Category") },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
                         trailingIcon = {
-                            IconButton(onClick = { categoryDropdownExpanded = true }) {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                            }
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryDropdownExpanded)
                         }
                     )
                     DropdownMenu(
