@@ -1,5 +1,7 @@
 package com.shani.moneymanger
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,15 +9,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChartScreen() {
+    val context = LocalContext.current
     val repository = TransactionRepository.getInstance(LocalContext.current)
 
     // ⭐ ADD: Manage date range in ChartScreen too
@@ -28,7 +31,33 @@ fun ChartScreen() {
         allTransactions.filterByDateRange(currentRange)
     }
 
-    Scaffold() { paddingValues ->
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+
+                    if (filteredTransactions.isEmpty()) {
+                    Toast.makeText(
+                        context,
+                        "No transactions in ${currentRange.displayText}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    pdfExporter.exportTransactions(
+                        context = context,
+                        transactions = filteredTransactions,
+                        dateRange = currentRange
+                    )
+                }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PictureAsPdf,
+                    contentDescription = "Download PDF"
+                )
+            }
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
