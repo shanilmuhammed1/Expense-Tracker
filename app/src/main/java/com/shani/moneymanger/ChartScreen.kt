@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,7 @@ fun ChartScreen() {
     val repository = TransactionRepository.getInstance(LocalContext.current)
     val scope = rememberCoroutineScope()
     // ⭐ ADD: Manage date range in ChartScreen too
-    var currentRange by remember { mutableStateOf(DateRange.current(ViewMode.MONTH)) }
+    var currentRange by remember{ mutableStateOf(DateRange.current(ViewMode.MONTH)) }
 
     // ⭐ ADD: Get and filter transactions
     val allTransactions by repository.transactions.collectAsState()
@@ -90,7 +91,7 @@ fun ChartScreen() {
             // ⭐ UPDATED: Pass filtered transactions
             ExpenseChart(transactions = filteredTransactions)
 
-            Spacer(modifier = Modifier.height(38.dp))
+            Spacer(modifier = Modifier.height(58.dp))
         }
     }
 }

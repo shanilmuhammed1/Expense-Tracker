@@ -77,6 +77,13 @@ data class DateRange(
                 ViewMode.MONTH -> forMonth(today.year, today.monthValue)
             }
         }
+        fun fromDate(date: LocalDate, mode: ViewMode): DateRange {
+            return when (mode) {
+                ViewMode.DAY -> forDay(date)
+                ViewMode.WEEK -> forWeek(date)
+                ViewMode.MONTH -> forMonth(date.year, date.monthValue)
+            }
+        }
     }
 
     fun previous(): DateRange {

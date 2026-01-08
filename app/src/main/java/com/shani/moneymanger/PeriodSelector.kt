@@ -1,5 +1,6 @@
 package com.shani.moneymanger
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -9,12 +10,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
+import java.time.Instant
+import java.time.ZoneId
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PeriodSelector(
     currentRange: DateRange,
     onRangeChanged: (DateRange) -> Unit
 ) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = currentRange.startDate
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+    )
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface),
@@ -69,7 +79,10 @@ fun PeriodSelector(
                 Text(
                     text = currentRange.displayText,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable{
+                        showDatePicker  = true
+                    }
                 )
 
                 // Next button
@@ -87,4 +100,43 @@ fun PeriodSelector(
             }
         }
     }
+if (showDatePicker) {
+    DatePickerDialog(
+        onDismissRequest = {
+            // User tapped outside or pressed back
+            showDatePicker = false
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    // Get the selected date from the picker
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        // Convert milliseconds to LocalDate
+                        val selectedDate = Instant.ofEpochMilli(millis)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+
+                        // Create a new DateRange based on current ViewMode
+                        val newRange = DateRange.fromDate(
+                            date = selectedDate,
+                            mode = currentRange.viewMode
+                        )
+                        onRangeChanged(newRange)
+                    }
+                    showDatePicker = false
+                }
+            ) {
+                Text("Select")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { showDatePicker = false }) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        // The actual date picker content
+        DatePicker(state = datePickerState)
+    }
+}
 }
