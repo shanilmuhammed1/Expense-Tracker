@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +28,9 @@ fun ChartScreen() {
     val repository = TransactionRepository.getInstance(LocalContext.current)
     val scope = rememberCoroutineScope()
     // ⭐ ADD: Manage date range in ChartScreen too
-    var currentRange by remember{ mutableStateOf(DateRange.current(ViewMode.MONTH)) }
+    val periodViewModel: PeriodViewModel = viewModel()
+    val currentRange by periodViewModel.currentRange.collectAsState()
+
 
     // ⭐ ADD: Get and filter transactions
     val allTransactions by repository.transactions.collectAsState()
@@ -82,7 +85,7 @@ fun ChartScreen() {
             PeriodSelector(
                 currentRange = currentRange,
                 onRangeChanged = { newRange ->
-                    currentRange = newRange
+                    periodViewModel.updateRange( newRange)
                 }
             )
 

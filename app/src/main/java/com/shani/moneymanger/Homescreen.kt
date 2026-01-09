@@ -28,13 +28,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.LocalDateTime
 import java.time.Instant.now
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun Homescreen(){
     val repository = TransactionRepository.getInstance(LocalContext.current)
-    var currentRange by remember { mutableStateOf(DateRange.current(ViewMode.DAY)) }  // ⭐ FIXED
+    val periodViewModel: PeriodViewModel = viewModel()
+    val currentRange by periodViewModel.currentRange.collectAsState()
+
     var showAddDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var selectedTransaction by remember { mutableStateOf<Transaction?>(null)}
@@ -87,7 +91,7 @@ fun Homescreen(){
             PeriodSelector(
                 currentRange = currentRange,
                 onRangeChanged = { newRange ->
-                    currentRange = newRange
+                    periodViewModel.updateRange(newRange)
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
