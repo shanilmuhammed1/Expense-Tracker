@@ -45,9 +45,10 @@ object pdfExporter {
             val pdfDocument = PdfDocument()
             val pageWidth = 595
             val pageHeight = 842
-            val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create()
-            val page = pdfDocument.startPage(pageInfo)
-            val canvas = page.canvas
+            var currentPageNumber = 1
+            val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight , currentPageNumber).create()
+            var page = pdfDocument.startPage(pageInfo)
+            var canvas = page.canvas
             var yPosition = 40f
 
             canvas.drawText("Expense statement", 40f, yPosition, titlePaint)
@@ -106,6 +107,23 @@ object pdfExporter {
 
             val transactionDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy")
             for (transaction in transactions) {
+                if (yPosition > pageHeight - 50) {
+                    pdfDocument.finishPage(page)
+                    currentPageNumber++
+                    val newPageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, currentPageNumber).create()
+                    page = pdfDocument.startPage(newPageInfo)
+                    canvas = page.canvas
+                    yPosition = 40f
+                    canvas.drawText("TRANSACTIONS", 40f, yPosition, headerPaint)
+                    yPosition += 25f
+                    canvas.drawText("Date", dateX, yPosition, normalPaint)
+                    canvas.drawText("Category", categoryX, yPosition, normalPaint)
+                    canvas.drawText("Description", descriptionX, yPosition, normalPaint)
+                    canvas.drawText("Amount", amountX, yPosition, normalPaint)
+                    yPosition += 5f
+                    canvas.drawLine(40f, yPosition, pageWidth - 40f, yPosition, linePaint)
+                    yPosition += 15f
+                }
                 val dateText = transaction.date.format(transactionDateFormatter)
                 val amountText = if (transaction.type == TransactionType.INCOME) {
                     "+₹${transaction.amount}"
@@ -119,15 +137,15 @@ object pdfExporter {
 
                 yPosition += 18f
 
-                if (yPosition > pageHeight - 50) {
-                    // Stop drawing (we'll handle multiple pages later if needed)
-                    canvas.drawText("... and more", dateX, yPosition, normalPaint)
-                    break
-                }
+
             }
             pdfDocument.finishPage(page)
-            val timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
-            val fileName = "expense_statement_$timestamp.pdf"
+            val safeRangeText = dateRange.displayText
+                .replace(" - ", "_to_") // First: Replace " - " with "_to_"
+                .replace(", ", "_")     // Then: Replace ", " with "_"
+                .replace(" ", "_")      // Finally: Replace remaining spaces
+
+            val fileName = "expense_statement_$safeRangeText.pdf"
 
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
