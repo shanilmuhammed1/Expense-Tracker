@@ -29,10 +29,10 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = VibrantPurple,
     secondary = PurpleGrey40,
-    onPrimary = PurpleOnPrimary,
+    onPrimary = Color(color =0xFF1C1B1F),
     surface = LightLavender,
     onSurface = Color(0xFF1C1B1F),
-    onSecondary = Color.White,
+    onSecondary = Color.Black,
     background = Color.White ,
     onBackground = Color(0xFF1C1B1F),
 
